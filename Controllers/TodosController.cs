@@ -37,6 +37,7 @@ namespace DotNetCoreSqlDb.Controllers
             else
             {
                 _logger.LogInformation("Data from database.");
+                await Task.Delay(1000);
                 var todoList = await _context.Todo.ToListAsync();
                 var serializedTodoList = JsonConvert.SerializeObject(todoList);
                 await _cache.SetAsync(_TodoItemsCacheKey, Encoding.UTF8.GetBytes(serializedTodoList));
@@ -92,7 +93,12 @@ namespace DotNetCoreSqlDb.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(todo);
+                var newToto = new Todo
+                {
+                    Description = todo.Description,
+                    CreatedDate = DateTime.UtcNow
+                };
+                _context.Add(newToto);
                 await _context.SaveChangesAsync();
 
                 // Clear the todo items cache
